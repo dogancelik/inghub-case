@@ -14,6 +14,8 @@ if (!['dev', 'prod'].includes(mode)) {
 export default {
   nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
   preserveSymlinks: true,
+  watch: mode === 'dev',
+  appIndex: 'index.html',
   plugins: [
     legacyPlugin({
       polyfills: {
