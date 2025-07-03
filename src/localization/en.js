@@ -25,6 +25,7 @@ export default {
   areYouSure: 'Are you sure?',
   confirmDelete:
     'Selected Employee record of {firstName} {lastName} will be deleted',
+  proceed: 'Proceed',
   cancel: 'Cancel',
   save: 'Save',
   required: 'Required',

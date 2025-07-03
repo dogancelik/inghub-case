@@ -24,6 +24,7 @@ export default {
   delete: 'Sil',
   areYouSure: 'Emin misiniz?',
   confirmDelete: '{firstName} {lastName} çalışan kaydı silinecek',
+  proceed: 'Devam Et',
   cancel: 'İptal',
   save: 'Kaydet',
   required: 'Zorunlu',

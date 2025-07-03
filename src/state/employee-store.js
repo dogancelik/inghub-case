@@ -20,9 +20,9 @@ function createFakeEmployees(length = 400) {
     firstName: fakeFirstNames[i % fakeFirstNames.length],
     lastName: `LastName${i + 1}`,
     phone: `+9053${(i + 1).toString().padStart(8, '0')}`,
-    email: `fake${i}@sourtimes.org`,
+    email: `fake${i + 1}@sourtimes.org`,
     department: i % 2 === 0 ? 'Analytics' : 'Tech',
-    position: i % 3 === 0 ? 'Junior' : i % 3 === 1 ? 'Mid' : 'Senior',
+    position: i % 3 === 0 ? 'Junior' : i % 3 === 1 ? 'Medior' : 'Senior',
     dateOfEmployment: new Date(2022, 8, 23 + (i % 30))
       .toISOString()
       .split('T')[0],

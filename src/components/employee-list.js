@@ -2,6 +2,7 @@ import {LitElement, html, css} from 'lit';
 import {localizationService, t} from '../services/localization-service.js';
 import {employeeStore} from '../state/employee-store.js';
 import {formatDate} from '../services/time-service.js';
+import '../components/delete-dialog.js';
 
 export class EmployeeList extends LitElement {
   static properties = {
@@ -94,7 +95,33 @@ export class EmployeeList extends LitElement {
       margin-top: 1rem;
       display: flex;
       justify-content: center;
-      gap: 1rem;
+      gap: 8px;
+      align-items: center;
+    }
+    .pagination button {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      font-size: 18px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .pagination button.selected {
+      background: var(--primary-color);
+      color: #fff;
+      font-weight: bold;
+    }
+    .pagination span {
+      font-size: 20px;
+      padding: 0 4px;
+      color: #888;
     }
     .list-mode {
       display: grid;
@@ -174,6 +201,67 @@ export class EmployeeList extends LitElement {
         background: none;
       }
     }
+    /* Dialog styles */
+    .delete-dialog {
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px #005;
+      padding: 0;
+      min-width: 350px;
+      max-width: 90vw;
+    }
+    .delete-dialog form {
+      padding: 32px 24px 24px 24px;
+      position: relative;
+      background: #fff;
+      border-radius: 8px;
+    }
+    .delete-dialog h2 {
+      margin: 0 0 12px 0;
+      color: var(--primary-color);
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .delete-dialog p {
+      margin: 0 0 24px 0;
+      color: #222;
+      font-size: 16px;
+    }
+    .dialog-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .dialog-actions .proceed {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 10px 0;
+      cursor: pointer;
+    }
+    .dialog-actions .cancel {
+      background: #fff;
+      color: var(--secondary-color);
+      border: 1px solid var(--secondary-color);
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 10px 0;
+      cursor: pointer;
+    }
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--primary-color);
+      padding: 0;
+    }
   `;
 
   constructor() {
@@ -214,11 +302,19 @@ export class EmployeeList extends LitElement {
       );
     }
     this.total = all.length;
-    const start = (this.page - 1) * this.pageSize;
-    this.employees = all.slice(start, start + this.pageSize);
+    let pageSize = this.pageSize;
+    if (this.view === 'list') {
+      pageSize = 4;
+    } else {
+      pageSize = 10;
+    }
+    const start = (this.page - 1) * pageSize;
+    this.employees = all.slice(start, start + pageSize);
     // Remove checked employees that are not in the current page
-    const currentIds = new window.Set(this.employees.map(e => e.id));
-    this.checkedEmployees = new window.Set([...this.checkedEmployees].filter(id => currentIds.has(id)));
+    const currentIds = new window.Set(this.employees.map((e) => e.id));
+    this.checkedEmployees = new window.Set(
+      [...this.checkedEmployees].filter((id) => currentIds.has(id))
+    );
   }
 
   _onSearch(e) {
@@ -229,6 +325,8 @@ export class EmployeeList extends LitElement {
 
   _changeView(view) {
     this.view = view;
+    this.page = 1;
+    this._updateList();
   }
 
   _goTo(page) {
@@ -241,12 +339,30 @@ export class EmployeeList extends LitElement {
     window.dispatchEvent(new PopStateEvent('popstate'));
   }
 
-  _delete(id) {
-    if (confirm(t('confirmDelete'))) {
-      employeeStore.delete(id);
-    }
+  _showDeleteDialog(id) {
+    const employee = this.employees.find((e) => e.id === id);
+    this._deleteDialogEmployee = employee;
+    this._deleteDialogOpen = true;
+    this.requestUpdate();
+    setTimeout(() => {
+      this.shadowRoot.getElementById('delete-dialog').showModal();
+    });
   }
 
+  _closeDeleteDialog() {
+    this._deleteDialogOpen = false;
+    this._deleteDialogEmployee = null;
+    this.requestUpdate();
+    const dialog = this.shadowRoot.getElementById('delete-dialog');
+    if (dialog && dialog.open) dialog.close();
+  }
+
+  _confirmDeleteDialog() {
+    if (this._deleteDialogEmployee) {
+      employeeStore.delete(this._deleteDialogEmployee.id);
+    }
+    this._closeDeleteDialog();
+  }
 
   _onCheckEmployee(e, id) {
     const checked = e.target.checked;
@@ -261,30 +377,37 @@ export class EmployeeList extends LitElement {
 
   _onToggleAll(e) {
     const checked = e.target.checked;
-    const currentIds = this.employees.map(e => e.id);
+    const currentIds = this.employees.map((e) => e.id);
     if (checked) {
       // Add all current page ids
       this.checkedEmployees = new window.Set([
         ...this.checkedEmployees,
-        ...currentIds
+        ...currentIds,
       ]);
     } else {
       // Remove all current page ids
       this.checkedEmployees = new window.Set(
-        [...this.checkedEmployees].filter(id => !currentIds.includes(id))
+        [...this.checkedEmployees].filter((id) => !currentIds.includes(id))
       );
     }
   }
 
   render() {
+    const dialogEmployee = this._deleteDialogEmployee;
     return html`
       <route-header title="employeeList">
         <div class="toolbar">
           <div class="view-toggle">
-            <button ?selected=${this.view === 'table'} @click=${() => this._changeView('table')}>
+            <button
+              ?selected=${this.view === 'table'}
+              @click=${() => this._changeView('table')}
+            >
               <svg-icon size="100%" name="bars"></svg-icon>
             </button>
-            <button ?selected=${this.view === 'list'} @click=${() => this._changeView('list')}>
+            <button
+              ?selected=${this.view === 'list'}
+              @click=${() => this._changeView('list')}
+            >
               <svg-icon size="100%" name="table-cells"></svg-icon>
             </button>
           </div>
@@ -293,15 +416,26 @@ export class EmployeeList extends LitElement {
 
       ${this.view === 'table' ? this._renderTable() : this._renderList()}
       ${this._renderPagination()}
+
+      <delete-dialog
+        .open=${!!dialogEmployee}
+        .firstName=${dialogEmployee ? dialogEmployee.firstName : ''}
+        .lastName=${dialogEmployee ? dialogEmployee.lastName : ''}
+        .onProceed=${this._confirmDeleteDialog.bind(this)}
+        .onCancel=${this._closeDeleteDialog.bind(this)}
+        .onClose=${this._closeDeleteDialog.bind(this)}
+      ></delete-dialog>
     `;
   }
 
   _renderTable() {
     if (!this.employees.length) return html`<p>${t('noResults')}</p>`;
     // Determine if all current page employees are checked
-    const currentIds = this.employees.map(e => e.id);
-    const allChecked = currentIds.length > 0 && currentIds.every(id => this.checkedEmployees.has(id));
-    const someChecked = currentIds.some(id => this.checkedEmployees.has(id));
+    const currentIds = this.employees.map((e) => e.id);
+    const allChecked =
+      currentIds.length > 0 &&
+      currentIds.every((id) => this.checkedEmployees.has(id));
+    const someChecked = currentIds.some((id) => this.checkedEmployees.has(id));
     return html`
       <table>
         <thead>
@@ -334,7 +468,7 @@ export class EmployeeList extends LitElement {
                   <input
                     type="checkbox"
                     .checked=${this.checkedEmployees.has(e.id)}
-                    @change=${ev => this._onCheckEmployee(ev, e.id)}
+                    @change=${(ev) => this._onCheckEmployee(ev, e.id)}
                   />
                 </td>
                 <td>${e.firstName}</td>
@@ -349,7 +483,10 @@ export class EmployeeList extends LitElement {
                   <button class="edit" @click=${() => this._edit(e.id)}>
                     <svg-icon size="18px" name="pen-to-square"></svg-icon>
                   </button>
-                  <button class="delete" @click=${() => this._delete(e.id)}>
+                  <button
+                    class="delete"
+                    @click=${() => this._showDeleteDialog(e.id)}
+                  >
                     <svg-icon size="18px" name="trash"></svg-icon>
                   </button>
                 </td>
@@ -370,8 +507,14 @@ export class EmployeeList extends LitElement {
             <li class="list-item">
               <div><b>${t('firstName')}:</b> ${e.firstName}</div>
               <div><b>${t('lastName')}:</b> ${e.lastName}</div>
-              <div><b>${t('dateOfEmployment')}:</b> ${formatDate(e.dateOfEmployment)}</div>
-              <div><b>${t('dateOfBirth')}:</b> ${formatDate(e.dateOfBirth)}</div>
+              <div>
+                <b>${t('dateOfEmployment')}:</b> ${formatDate(
+                  e.dateOfEmployment
+                )}
+              </div>
+              <div>
+                <b>${t('dateOfBirth')}:</b> ${formatDate(e.dateOfBirth)}
+              </div>
               <div><b>${t('phone')}:</b> ${e.phone}</div>
               <div><b>${t('email')}:</b> ${e.email}</div>
               <div>
@@ -383,7 +526,10 @@ export class EmployeeList extends LitElement {
                   <svg-icon size="14px" name="pen-to-square"></svg-icon>
                   ${t('edit')}
                 </button>
-                <button class="delete" @click=${() => this._delete(e.id)}>
+                <button
+                  class="delete"
+                  @click=${() => this._showDeleteDialog(e.id)}
+                >
                   <svg-icon size="14px" name="trash"></svg-icon>
                   ${t('delete')}
                 </button>
@@ -394,24 +540,79 @@ export class EmployeeList extends LitElement {
       </ul>
     `;
   }
+  // Dialog styles removed, now in delete-dialog.js
 
   _renderPagination() {
-    if (this.total <= this.pageSize) return '';
-    const totalPages = Math.ceil(this.total / this.pageSize);
+    // Use correct page size for current view
+    const pageSize = this.view === 'list' ? 4 : 10;
+    if (this.total <= pageSize) return '';
+    const totalPages = Math.ceil(this.total / pageSize);
+    const page = this.page;
+    let start = 1;
+    let end = totalPages;
+    // Always show 5 page numbers, center current page if possible
+    if (totalPages <= 7) {
+      start = 1;
+      end = totalPages;
+    } else if (page <= 3) {
+      start = 1;
+      end = 5;
+    } else if (page >= totalPages - 2) {
+      start = totalPages - 4;
+      end = totalPages;
+    } else {
+      start = page - 2;
+      end = page + 2;
+    }
+    // Clamp
+    if (start < 1) start = 1;
+    if (end > totalPages) end = totalPages;
+
+    const pageButtons = [];
+    for (let i = start; i <= end; i++) {
+      pageButtons.push(html`
+        <button
+          class=${i === page ? 'selected' : ''}
+          @click=${() => this._goTo(i)}
+        >
+          ${i}
+        </button>
+      `);
+    }
+
     return html`
       <div class="pagination">
         <button
-          ?disabled=${this.page === 1}
-          @click=${() => this._goTo(this.page - 1)}
+          ?disabled=${page === 1}
+          @click=${() => this._goTo(page - 1)}
+          title="${t('prev')}"
         >
-          ${t('prev')}
+          <svg-icon size="16px" name="chevron-left"></svg-icon>
         </button>
-        <span>${t('page')} ${this.page} ${t('of')} ${totalPages}</span>
+        ${start > 1
+          ? html`<button
+              @click=${() => this._goTo(1)}
+              class=${page === 1 ? 'selected' : ''}
+            >
+              1
+            </button>`
+          : ''}
+        ${start > 2 ? html`<span>&hellip;</span>` : ''} ${pageButtons}
+        ${end < totalPages - 1 ? html`<span>&hellip;</span>` : ''}
+        ${end < totalPages
+          ? html`<button
+              @click=${() => this._goTo(totalPages)}
+              class=${page === totalPages ? 'selected' : ''}
+            >
+              ${totalPages}
+            </button>`
+          : ''}
         <button
-          ?disabled=${this.page === totalPages}
-          @click=${() => this._goTo(this.page + 1)}
+          ?disabled=${page === totalPages}
+          @click=${() => this._goTo(page + 1)}
+          title="${t('next')}"
         >
-          ${t('next')}
+          <svg-icon size="16px" name="chevron-right"></svg-icon>
         </button>
       </div>
     `;

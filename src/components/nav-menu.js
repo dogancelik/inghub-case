@@ -56,8 +56,8 @@ export class NavMenu extends LitElement {
 
   constructor() {
     super();
-    this._lang = (window.navigator.language || 'en').startsWith('tr') ? 'tr' : 'en';
-    localizationService.locale = this._lang;
+    // (window.navigator.language || 'en').startsWith('tr') ? 'tr' : 'en';
+    this._lang = localizationService.locale;
   }
 
   connectedCallback() {
@@ -70,9 +70,11 @@ export class NavMenu extends LitElement {
       }
     };
     localizationService.onLocaleChanged(this._onLocaleChanged);
+    window.addEventListener('popstate', this._onPopState = () => this.requestUpdate());
   }
 
   disconnectedCallback() {
+    window.removeEventListener('popstate', this._onPopState);
     localizationService.offLocaleChanged(this._onLocaleChanged);
     super.disconnectedCallback();
   }
@@ -83,22 +85,30 @@ export class NavMenu extends LitElement {
     this.requestUpdate();
   }
 
+  _onNavClick(e, href) {
+    e.preventDefault();
+    window.history.pushState({}, '', href);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }
+
   render() {
     const path = window.location.pathname;
     return html`
       <nav>
         <div class="col left">
-          <a href="/" ?active=${path === '/'}>
+          <a href="/" ?active=${path === '/'} @click=${e => this._onNavClick(e, '/')}>
             <svg-icon size="16px" name="ing"></svg-icon>
             ING
           </a>
         </div>
         <div class="col right">
-          <a href="/employees" ?active=${path.startsWith('/employees') && !path.endsWith('add')}>
+          <a href="/employees" ?active=${path.startsWith('/employees') && !path.endsWith('add')}
+             @click=${e => this._onNavClick(e, '/employees')}>
             <svg-icon size="16px" name="user-tie"></svg-icon>
             ${t('employees')}
           </a>
-          <a href="/employees/add" ?active=${path.endsWith('add')}>
+          <a href="/employees/add" ?active=${path.endsWith('add')}
+             @click=${e => this._onNavClick(e, '/employees/add')}>
             <svg-icon size="16px" name="plus"></svg-icon>
             ${t('addNew')}
           </a>

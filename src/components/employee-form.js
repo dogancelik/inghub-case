@@ -158,7 +158,6 @@ export class EmployeeForm extends LitElement {
       return;
     }
     if (this.isEdit) {
-      if (!confirm(t('confirmEdit'))) return;
       employeeStore.update(this.employee.id, this.employee);
     } else {
       this.employee.id = Date.now().toString();
