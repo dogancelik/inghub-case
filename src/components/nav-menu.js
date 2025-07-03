@@ -8,25 +8,38 @@ export class NavMenu extends LitElement {
       height: 47px;
       display: flex;
       padding: 0 20px 0 11px;
-      justify-content: end;
+      justify-content: space-between;
       align-items: center;
       gap: 15px;
     }
     a {
-      color: var(--primary-color);
       text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .col {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .left a {
+      color: black;
+    }
+    .right a {
+      color: var(--primary-color);
       font-weight: 500;
-      font-size: 1.1rem;
+      font-size: 14px;
       transition: opacity 0.2s;
       opacity: 0.6;
     }
-    a[active], a:hover {
+    .right a[active], .right a:hover {
       opacity: 1;
     }
     .lang-flag {
       cursor: pointer;
       font-size: 1.3rem;
-      margin-left: 8px;
+      margin-left: 4px;
       border: none;
       background: none;
       padding: 0;
@@ -74,15 +87,25 @@ export class NavMenu extends LitElement {
     const path = window.location.pathname;
     return html`
       <nav>
-        <a href="/employees" ?active=${path.startsWith('/employees') && !path.endsWith('add')}>
-          ${t('employees')}
-        </a>
-        <a href="/employees/add" ?active=${path.endsWith('add')}>
-          ${t('addNew')}
-        </a>
-        <button class="lang-flag" @click=${this._toggleLang} title=${this._lang === 'en' ? 'Türkçe' : 'English'}>
-          ${this._lang === 'en' ? '🇬🇧' : '🇹🇷'}
-        </button>
+        <div class="col left">
+          <a href="/" ?active=${path === '/'}>
+            <svg-icon size="16px" name="ing"></svg-icon>
+            ING
+          </a>
+        </div>
+        <div class="col right">
+          <a href="/employees" ?active=${path.startsWith('/employees') && !path.endsWith('add')}>
+            <svg-icon size="16px" name="user-tie"></svg-icon>
+            ${t('employees')}
+          </a>
+          <a href="/employees/add" ?active=${path.endsWith('add')}>
+            <svg-icon size="16px" name="plus"></svg-icon>
+            ${t('addNew')}
+          </a>
+          <button class="lang-flag" @click=${this._toggleLang} title=${this._lang === 'en' ? 'Türkçe' : 'English'}>
+            ${this._lang === 'en' ? '🇬🇧' : '🇹🇷'}
+          </button>
+        </div>
       </nav>
     `;
   }

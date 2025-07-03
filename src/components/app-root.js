@@ -4,6 +4,7 @@ import '../components/nav-menu.js';
 import '../components/employee-list.js';
 import '../components/employee-form.js';
 import '../components/route-header.js';
+import '../components/svg-icon.js';
 import {localizationService} from '../services/localization-service.js';
 
 export class AppRoot extends LitElement {
