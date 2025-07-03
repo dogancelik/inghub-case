@@ -1,6 +1,6 @@
-import { LitElement, html, css } from 'lit';
-import { t } from '../localization/i18n.js';
-import { employeeStore } from '../state/employee-store.js';
+import {LitElement, html, css} from 'lit';
+import {localizationService, t} from '../services/localization-service.js';
+import {employeeStore} from '../state/employee-store.js';
 
 function emptyEmployee() {
   return {
@@ -18,34 +18,60 @@ function emptyEmployee() {
 
 export class EmployeeForm extends LitElement {
   static properties = {
-    employee: { type: Object },
-    isEdit: { type: Boolean },
-    errors: { type: Object },
+    employee: {type: Object},
+    isEdit: {type: Boolean},
+    errors: {type: Object},
   };
 
   static styles = css`
+    h2 {
+      color: var(--primary-color);
+      margin-left: 52px;
+    }
     form {
-      max-width: 500px;
+      min-height: 70vh;
       margin: 0 auto;
-      background: #181818;
-      padding: 2rem;
+      background: #ffffff;
+      padding: 16px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px #0008;
-      color: #fff;
+      box-shadow: 0 0 8px #0001;
+      display: flex;
+      flex-direction: column;
+    }
+    .you-are-editing {
+      min-height: 65px;
+    }
+    .you-are-editing p {
+      margin: 0;
+    }
+    .fields {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: 149px;
+      row-gap: 59px;
+      flex-basis: 85%;
+      width: 85%;
+      margin: 0 auto 82px auto;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 0;
+      /* Remove flex-basis and width for grid layout */
     }
     label {
       display: block;
       margin-bottom: 0.3rem;
       font-weight: 500;
+      color: #363636;
     }
-    input, select {
-      width: 100%;
+    input,
+    select {
+      width: var(--form-field-width);
       padding: 0.5rem;
-      margin-bottom: 1rem;
-      border: 1px solid #333;
+      border: 1px solid #6f6f6f;
       border-radius: 4px;
-      background: #222;
-      color: #fff;
+      background-color: #fff;
     }
     .error {
       color: #e53935;
@@ -53,27 +79,26 @@ export class EmployeeForm extends LitElement {
       margin-bottom: 0.5rem;
     }
     .actions {
+      flex-basis: 100%;
       display: flex;
-      justify-content: flex-end;
-      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      gap: 66px;
     }
     button {
-      background: #00bcd4;
-      color: #222;
+      width: var(--form-field-width);
+      background: var(--primary-color);
+      color: #fff;
       border: none;
       padding: 0.7rem 1.5rem;
-      border-radius: 4px;
+      border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
     }
     button.cancel {
-      background: #444;
-      color: #fff;
-    }
-    @media (max-width: 600px) {
-      form {
-        padding: 1rem;
-      }
+      background: #fff;
+      color: #525199;
+      border: 1px solid #525199;
     }
   `;
 
@@ -90,16 +115,23 @@ export class EmployeeForm extends LitElement {
     if (match) {
       const emp = employeeStore.getById(match[1]);
       if (emp) {
-        this.employee = { ...emp };
+        this.employee = {...emp};
         this.isEdit = true;
       }
     }
+    this._onLocaleChanged = () => this.requestUpdate();
+    localizationService.onLocaleChanged(this._onLocaleChanged);
+  }
+
+  disconnectedCallback() {
+    localizationService.offLocaleChanged(this._onLocaleChanged);
+    super.disconnectedCallback();
   }
 
   _onInput(e) {
-    const { name, value } = e.target;
-    this.employee = { ...this.employee, [name]: value };
-    this.errors = { ...this.errors, [name]: undefined };
+    const {name, value} = e.target;
+    this.employee = {...this.employee, [name]: value};
+    this.errors = {...this.errors, [name]: undefined};
   }
 
   _validate() {
@@ -113,7 +145,8 @@ export class EmployeeForm extends LitElement {
     if (!/^\+?\d{10,15}$/.test(e.phone)) errors.phone = t('invalidPhone');
     if (!e.email) errors.email = t('required');
     if (!/^\S+@\S+\.\S+$/.test(e.email)) errors.email = t('invalidEmail');
-    if (!employeeStore.isUnique(e.email, e.phone, this.isEdit ? e.id : null)) errors.email = t('uniqueError');
+    if (!employeeStore.isUnique(e.email, e.phone, this.isEdit ? e.id : null))
+      errors.email = t('uniqueError');
     return errors;
   }
 
@@ -143,47 +176,122 @@ export class EmployeeForm extends LitElement {
   render() {
     const e = this.employee;
     return html`
+      <route-header
+        .title="${this.isEdit ? 'editEmployee' : 'addEmployee'}"
+      ></route-header>
       <form @submit=${this._onSubmit.bind(this)}>
-        <label>${t('firstName')}</label>
-        <input name="firstName" .value=${e.firstName} @input=${this._onInput.bind(this)} />
-        ${this.errors.firstName ? html`<div class="error">${this.errors.firstName}</div>` : ''}
+        <div class="you-are-editing">
+          ${this.isEdit
+            ? html`
+                <p>
+                  ${t('youAreEditing', {
+                    firstName: this.employee.firstName,
+                    lastName: this.employee.lastName,
+                  })}
+                </p>
+              `
+            : null}
+        </div>
 
-        <label>${t('lastName')}</label>
-        <input name="lastName" .value=${e.lastName} @input=${this._onInput.bind(this)} />
-        ${this.errors.lastName ? html`<div class="error">${this.errors.lastName}</div>` : ''}
-
-        <label>${t('dateOfEmployment')}</label>
-        <input name="dateOfEmployment" type="date" .value=${e.dateOfEmployment} @input=${this._onInput.bind(this)} />
-        ${this.errors.dateOfEmployment ? html`<div class="error">${this.errors.dateOfEmployment}</div>` : ''}
-
-        <label>${t('dateOfBirth')}</label>
-        <input name="dateOfBirth" type="date" .value=${e.dateOfBirth} @input=${this._onInput.bind(this)} />
-        ${this.errors.dateOfBirth ? html`<div class="error">${this.errors.dateOfBirth}</div>` : ''}
-
-        <label>${t('phoneNumber')}</label>
-        <input name="phone" .value=${e.phone} @input=${this._onInput.bind(this)} />
-        ${this.errors.phone ? html`<div class="error">${this.errors.phone}</div>` : ''}
-
-        <label>${t('emailAddress')}</label>
-        <input name="email" .value=${e.email} @input=${this._onInput.bind(this)} />
-        ${this.errors.email ? html`<div class="error">${this.errors.email}</div>` : ''}
-
-        <label>${t('department')}</label>
-        <select name="department" .value=${e.department} @input=${this._onInput.bind(this)}>
-          <option value="Analytics">${t('analytics')}</option>
-          <option value="Tech">${t('tech')}</option>
-        </select>
-
-        <label>${t('position')}</label>
-        <select name="position" .value=${e.position} @input=${this._onInput.bind(this)}>
-          <option value="Junior">${t('junior')}</option>
-          <option value="Medior">${t('medior')}</option>
-          <option value="Senior">${t('senior')}</option>
-        </select>
+        <div class="fields">
+          <div class="field">
+            <label>${t('firstName')}</label>
+            <input
+              name="firstName"
+              .value=${e.firstName}
+              @input=${this._onInput.bind(this)}
+            />
+            ${this.errors.firstName
+              ? html`<div class="error">${this.errors.firstName}</div>`
+              : ''}
+          </div>
+          <div class="field">
+            <label>${t('lastName')}</label>
+            <input
+              name="lastName"
+              .value=${e.lastName}
+              @input=${this._onInput.bind(this)}
+            />
+            ${this.errors.lastName
+              ? html`<div class="error">${this.errors.lastName}</div>`
+              : ''}
+          </div>
+          <div class="field">
+            <label>${t('dateOfEmployment')}</label>
+            <input
+              name="dateOfEmployment"
+              type="date"
+              .value=${e.dateOfEmployment}
+              @input=${this._onInput.bind(this)}
+            />
+            ${this.errors.dateOfEmployment
+              ? html`<div class="error">${this.errors.dateOfEmployment}</div>`
+              : ''}
+          </div>
+          <div class="field">
+            <label>${t('dateOfBirth')}</label>
+            <input
+              name="dateOfBirth"
+              type="date"
+              .value=${e.dateOfBirth}
+              @input=${this._onInput.bind(this)}
+            />
+            ${this.errors.dateOfBirth
+              ? html`<div class="error">${this.errors.dateOfBirth}</div>`
+              : ''}
+          </div>
+          <div class="field">
+            <label>${t('phone')}</label>
+            <input
+              name="phone"
+              .value=${e.phone}
+              @input=${this._onInput.bind(this)}
+            />
+            ${this.errors.phone
+              ? html`<div class="error">${this.errors.phone}</div>`
+              : ''}
+          </div>
+          <div class="field">
+            <label>${t('email')}</label>
+            <input
+              name="email"
+              .value=${e.email}
+              @input=${this._onInput.bind(this)}
+            />
+            ${this.errors.email
+              ? html`<div class="error">${this.errors.email}</div>`
+              : ''}
+          </div>
+          <div class="field">
+            <label>${t('department')}</label>
+            <select
+              name="department"
+              .value=${e.department}
+              @input=${this._onInput.bind(this)}
+            >
+              <option value="Analytics">${t('analytics')}</option>
+              <option value="Tech">${t('tech')}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>${t('position')}</label>
+            <select
+              name="position"
+              .value=${e.position}
+              @input=${this._onInput.bind(this)}
+            >
+              <option value="Junior">${t('junior')}</option>
+              <option value="Medior">${t('medior')}</option>
+              <option value="Senior">${t('senior')}</option>
+            </select>
+          </div>
+        </div>
 
         <div class="actions">
-          <button type="button" class="cancel" @click=${this._onCancel}>${t('cancel')}</button>
           <button type="submit">${t('save')}</button>
+          <button type="button" class="cancel" @click=${this._onCancel}>
+            ${t('cancel')}
+          </button>
         </div>
       </form>
     `;

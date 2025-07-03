@@ -3,34 +3,41 @@ import { Router } from '@vaadin/router';
 import '../components/nav-menu.js';
 import '../components/employee-list.js';
 import '../components/employee-form.js';
-import { setLocale } from '../localization/i18n.js';
+import '../components/route-header.js';
+import {localizationService} from '../services/localization-service.js';
 
 export class AppRoot extends LitElement {
   static styles = css`
     :host {
       display: block;
       min-height: 100vh;
-      background: #222;
-      color: #fff;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f8f8f8;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      font-optical-sizing: auto;
     }
     main {
-      max-width: 1200px;
+      max-width: 93%;
       margin: 0 auto;
-      padding: 2rem 1rem;
+      padding: 35px 45px;
     }
   `;
 
-  firstUpdated() {
-    setLocale(document.documentElement.lang || 'en');
-    const outlet = this.renderRoot.querySelector('#outlet');
-    const router = new Router(outlet);
-    router.setRoutes([
-      { path: '/', redirect: '/employees' },
-      { path: '/employees', component: 'employee-list' },
-      { path: '/employees/add', component: 'employee-form' },
-      { path: '/employees/edit/:id', component: 'employee-form' },
-    ]);
+  _routerInitialized = false;
+
+  updated() {
+    if (!this._routerInitialized) {
+      const outlet = this.renderRoot.querySelector('#outlet');
+      if (outlet) {
+        const router = new Router(outlet);
+        router.setRoutes([
+          { path: '/', redirect: '/employees' },
+          { path: '/employees', component: 'employee-list' },
+          { path: '/employees/add', component: 'employee-form' },
+          { path: '/employees/edit/:id', component: 'employee-form' },
+        ]);
+        this._routerInitialized = true;
+      }
+    }
   }
 
   render() {

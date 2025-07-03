@@ -15,6 +15,7 @@ export default {
   nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
   preserveSymlinks: true,
   watch: mode === 'dev',
+  rootDir: './',
   appIndex: 'index.html',
   plugins: [
     legacyPlugin({
