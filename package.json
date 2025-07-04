@@ -23,7 +23,7 @@
     "analyze:watch": "cem analyze --litelement --globs \"**/*.js\" --exclude docs --watch",
     "serve": "wds --config web-dev-server.config.js",
     "serve:prod": "MODE=prod npm run serve",
-    "serve:dist": "wds --root-dir dist --app-index index.html",
+    "serve:dist": "cd dist && wds --app-index index.html",
     "test": "npm run test:dev && npm run test:prod",
     "test:dev": "wtr",
     "test:watch": "wtr --watch",

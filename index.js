@@ -1,4 +1,4 @@
-import './components/app-root.js';
+import './src/components/app-root.js';
 
 // Entry point for the app
 window.addEventListener('DOMContentLoaded', () => {

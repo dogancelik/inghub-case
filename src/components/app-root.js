@@ -1,10 +1,11 @@
 import { LitElement, html, css } from 'lit';
-import { Router } from '@vaadin/router';
+import { HashRouter } from '../utils/hash-router.js';
 import '../components/nav-menu.js';
 import '../components/employee-list.js';
 import '../components/employee-form.js';
 import '../components/route-header.js';
 import '../components/svg-icon.js';
+// eslint-disable-next-line no-unused-vars
 import {localizationService} from '../services/localization-service.js';
 
 export class AppRoot extends LitElement {
@@ -31,7 +32,7 @@ export class AppRoot extends LitElement {
       if (outlet) {
         const isGhPages = window.location.hostname === 'dogancelik.com';
         const routerOptions = isGhPages ? { baseUrl: '/inghub-case/' } : {};
-        const router = new Router(outlet, routerOptions);
+        const router = new HashRouter(outlet, routerOptions);
         router.setRoutes([
           { path: '/', redirect: '/employees' },
           { path: '/employees', component: 'employee-list' },

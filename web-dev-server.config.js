@@ -16,6 +16,7 @@ export default {
   preserveSymlinks: true,
   watch: mode === 'dev',
   rootDir: './',
+  // https://github.com/modernweb-dev/web/issues/2328
   appIndex: 'index.html',
   plugins: [
     legacyPlugin({
