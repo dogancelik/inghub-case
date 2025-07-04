@@ -7,7 +7,7 @@
   "module": "my-element.js",
   "type": "module",
   "scripts": {
-    "build": "echo \"This is not a TypeScript project, so no need to build.\"",
+    "build": "rimraf dist && rollup -c",
     "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
     "lint:eslint": "eslint '**/*.js'",
     "lint:lit-analyzer": "lit-analyzer my-element.js",
@@ -23,6 +23,7 @@
     "analyze:watch": "cem analyze --litelement --globs \"**/*.js\" --exclude docs --watch",
     "serve": "wds --config web-dev-server.config.js",
     "serve:prod": "MODE=prod npm run serve",
+    "serve:dist": "wds --root-dir dist --app-index index.html",
     "test": "npm run test:dev && npm run test:prod",
     "test:dev": "wtr",
     "test:watch": "wtr --watch",
@@ -53,6 +54,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@web/dev-server": "^0.1.31",
     "@web/dev-server-legacy": "^1.0.0",
+    "@web/rollup-plugin-html": "^2.3.0",
     "@web/test-runner": "^0.15.0",
     "@web/test-runner-playwright": "^0.9.0",
     "@webcomponents/webcomponentsjs": "^2.8.0",
@@ -61,7 +63,8 @@
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "rollup": "^4.18.0",
-    "rollup-plugin-summary": "^2.0.1"
+    "rollup-plugin-summary": "^2.0.1",
+    "rollup-plugin-copy": "^3.5.0"
   },
   "customElements": "custom-elements.json"
 }
