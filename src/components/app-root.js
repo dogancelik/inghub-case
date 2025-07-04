@@ -29,7 +29,9 @@ export class AppRoot extends LitElement {
     if (!this._routerInitialized) {
       const outlet = this.renderRoot.querySelector('#outlet');
       if (outlet) {
-        const router = new Router(outlet);
+        const isGhPages = window.location.hostname === 'dogancelik.com';
+        const routerOptions = isGhPages ? { baseUrl: '/inghub-case/' } : {};
+        const router = new Router(outlet, routerOptions);
         router.setRoutes([
           { path: '/', redirect: '/employees' },
           { path: '/employees', component: 'employee-list' },
