@@ -1,0 +1,18 @@
+:root {
+  --primary-color: #ff6200;
+  --secondary-color: #525199;
+  --form-field-width: 286px;
+  --header-margin-left: 52px;
+  --table-border-color: #f9f9f9;
+  --label-color: #ada7a7;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
