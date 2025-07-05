@@ -34,6 +34,7 @@ export default {
      * This minification setup serves the static site generation.
      * For bundling and minification, check the README.md file.
      */
+    /*
     terser({
       ecma: 2021,
       module: true,
@@ -44,6 +45,7 @@ export default {
         },
       },
     }),
+    */
     summary(),
   ],
 };

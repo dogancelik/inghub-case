@@ -1,13 +1,12 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages (Disabled)
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    if: false  # DISABLED
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

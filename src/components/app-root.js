@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { HashRouter } from '../utils/hash-router.js';
+import { Router } from '@vaadin/router';
 import '../components/nav-menu.js';
 import '../components/employee-list.js';
 import '../components/employee-form.js';
@@ -32,7 +32,7 @@ export class AppRoot extends LitElement {
       if (outlet) {
         const isGhPages = window.location.hostname === 'dogancelik.com';
         const routerOptions = isGhPages ? { baseUrl: '/inghub-case/' } : {};
-        const router = new HashRouter(outlet, routerOptions);
+        const router = new Router(outlet, routerOptions);
         router.setRoutes([
           { path: '/', redirect: '/employees' },
           { path: '/employees', component: 'employee-list' },
