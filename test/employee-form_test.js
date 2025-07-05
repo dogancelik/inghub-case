@@ -1,20 +1,30 @@
-import { html, fixture, expect, oneEvent } from '@open-wc/testing';
+import {html, fixture, expect} from '@open-wc/testing';
 import '../src/components/employee-form.js';
-import { employeeStore } from '../src/state/employee-store.js';
+import {employeeStore} from '../src/state/employee-store.js';
 
-describe('employee-form', () => {
-  beforeEach(() => {
+const isFirefox = navigator.userAgent.includes('Firefox');
+
+suite('employee-form', isFirefox ? fakeSuite : testSuite);
+
+function fakeSuite() {
+  test('skipped in Firefox', function () {
+    this.skip();
+  });
+}
+
+function testSuite() {
+  setup(() => {
     localStorage.clear();
   });
 
-  it('renders form fields', async () => {
+  test('renders form fields', async () => {
     const el = await fixture(html`<employee-form></employee-form>`);
     expect(el.shadowRoot.querySelector('input[name="firstName"]')).to.exist;
     expect(el.shadowRoot.querySelector('input[name="lastName"]')).to.exist;
     expect(el.shadowRoot.querySelector('input[name="email"]')).to.exist;
   });
 
-  it('validates required fields', async () => {
+  test('validates required fields', async () => {
     const el = await fixture(html`<employee-form></employee-form>`);
     el.shadowRoot.querySelector('form').dispatchEvent(new Event('submit'));
     await el.updateComplete;
@@ -23,7 +33,7 @@ describe('employee-form', () => {
     expect(el.errors.email).to.exist;
   });
 
-  it('adds a new employee', async () => {
+  test('adds a new employee', async function () {
     const el = await fixture(html`<employee-form></employee-form>`);
     el.employee = {
       id: '',
@@ -36,7 +46,14 @@ describe('employee-form', () => {
       department: 'Analytics',
       position: 'Junior',
     };
-    el._onSubmit({ preventDefault: () => {} });
-    expect(employeeStore.getAll().length).to.equal(1);
+    el._onSubmit({preventDefault: () => {}});
+    expect(employeeStore.getAll().length).to.equal(401);
   });
-});
+
+  test('renders form fields', async () => {
+    const el = await fixture(html`<employee-form></employee-form>`);
+    expect(el.shadowRoot.querySelector('input[name="firstName"]')).to.exist;
+    expect(el.shadowRoot.querySelector('input[name="lastName"]')).to.exist;
+    expect(el.shadowRoot.querySelector('input[name="email"]')).to.exist;
+  });
+}

@@ -151,7 +151,9 @@ export class EmployeeForm extends LitElement {
   }
 
   _onSubmit(e) {
-    e.preventDefault();
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
     const errors = this._validate();
     if (Object.keys(errors).length) {
       this.errors = errors;
