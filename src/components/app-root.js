@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { Router } from '@vaadin/router';
 import '../components/nav-menu.js';
-import '../components/employee-list.js';
+import '../components/employee-list-container.js';
 import '../components/employee-form.js';
 import '../components/route-header.js';
 import '../components/svg-icon.js';
@@ -35,7 +35,7 @@ export class AppRoot extends LitElement {
         const router = new Router(outlet, routerOptions);
         router.setRoutes([
           { path: '/', redirect: '/employees' },
-          { path: '/employees', component: 'employee-list' },
+          { path: '/employees', component: 'employee-list-container' },
           { path: '/employees/add', component: 'employee-form' },
           { path: '/employees/edit/:id', component: 'employee-form' },
         ]);
