@@ -5,6 +5,7 @@
   --header-margin-left: 52px;
   --table-border-color: #f9f9f9;
   --label-color: #ada7a7;
+  --actions-gap: 66px;
 }
 
 html, body {

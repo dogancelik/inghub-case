@@ -1,5 +1,5 @@
 import {LitElement, html} from 'lit';
-import { globalCss } from '../utils/global-css.js';
+import {globalCss} from '../utils/global-css.js';
 import {localizationService, t} from '../services/localization-service.js';
 import {employeeStore} from '../state/employee-store.js';
 
@@ -68,6 +68,16 @@ export class EmployeeForm extends LitElement {
         margin-bottom: 20px;
       }
     }
+      @media (max-width: 1600px) {
+      .field {
+        max-width: var(--form-field-width);
+      }
+      .fields {
+        column-gap: var(--actions-gap);
+        justify-content: center;
+        grid-template-columns: repeat(2, var(--form-field-width));
+      }
+    }
     .field {
       display: flex;
       flex-direction: column;
@@ -104,7 +114,7 @@ export class EmployeeForm extends LitElement {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 66px;
+      gap: var(--actions-gap);
     }
     button {
       width: var(--form-field-width);
