@@ -17,7 +17,7 @@ const fakeFirstNames = [
 function createFakeEmployees(length = 400) {
   return Array.from({length}, (_, i) => ({
     id: `fake-id-${i + 1}`,
-    firstName: fakeFirstNames[i % fakeFirstNames.length],
+    firstName: fakeFirstNames[Math.floor(Math.random() * fakeFirstNames.length)],
     lastName: `LastName${i + 1}`,
     phone: `+9053${(i + 1).toString().padStart(8, '0')}`,
     email: `fake${i + 1}@sourtimes.org`,
