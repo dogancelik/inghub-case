@@ -1,4 +1,5 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
+import { globalCss } from '../utils/global-css.js';
 import { Router } from '@vaadin/router';
 import '../components/nav-menu.js';
 import '../components/employee-list-container.js';
@@ -9,7 +10,7 @@ import '../components/svg-icon.js';
 import {localizationService} from '../services/localization-service.js';
 
 export class AppRoot extends LitElement {
-  static styles = css`
+  static styles = globalCss`
     :host {
       display: block;
       min-height: 100vh;
@@ -21,6 +22,11 @@ export class AppRoot extends LitElement {
       max-width: 93%;
       margin: 0 auto;
       padding: 35px 45px;
+    }
+    @media (max-width: 600px) {
+      main {
+        padding: 20px 10px;
+      }
     }
   `;
 

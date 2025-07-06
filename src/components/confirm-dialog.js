@@ -1,4 +1,5 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
+import { globalCss } from '../utils/global-css';
 
 export class ConfirmDialog extends LitElement {
   static properties = {
@@ -8,7 +9,7 @@ export class ConfirmDialog extends LitElement {
     onCancel: { type: Function },
   };
 
-  static styles = css`
+  static styles = globalCss`
     .backdrop {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;

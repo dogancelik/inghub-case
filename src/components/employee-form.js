@@ -1,4 +1,5 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html} from 'lit';
+import { globalCss } from '../utils/global-css.js';
 import {localizationService, t} from '../services/localization-service.js';
 import {employeeStore} from '../state/employee-store.js';
 
@@ -23,7 +24,7 @@ export class EmployeeForm extends LitElement {
     errors: {type: Object},
   };
 
-  static styles = css`
+  static styles = globalCss`
     h2 {
       color: var(--primary-color);
       margin-left: 52px;
@@ -41,6 +42,11 @@ export class EmployeeForm extends LitElement {
     .you-are-editing {
       min-height: 65px;
     }
+    @media (max-width: 900px) {
+      .you-are-editing {
+        min-height: 0;
+      }
+    }
     .you-are-editing p {
       margin: 0;
     }
@@ -52,6 +58,15 @@ export class EmployeeForm extends LitElement {
       flex-basis: 85%;
       width: 85%;
       margin: 0 auto 82px auto;
+    }
+    @media (max-width: 900px) {
+      .fields {
+        grid-template-columns: 1fr;
+        column-gap: 0;
+        row-gap: 10px;
+        width: 100%;
+        margin-bottom: 20px;
+      }
     }
     .field {
       display: flex;
@@ -72,6 +87,12 @@ export class EmployeeForm extends LitElement {
       border: 1px solid #6f6f6f;
       border-radius: 4px;
       background-color: #fff;
+    }
+    @media (max-width: 900px) {
+      input,
+      select {
+        width: 100%;
+      }
     }
     .error {
       color: #e53935;

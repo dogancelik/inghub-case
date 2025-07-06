@@ -1,4 +1,5 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html} from 'lit';
+import { globalCss } from '../utils/global-css.js';
 import {t} from '../services/localization-service.js';
 import {formatDate} from '../services/time-service.js';
 
@@ -11,14 +12,25 @@ export class EmployeeList extends LitElement {
     onCheckEmployee: {type: Function, attribute: false},
   };
 
-  static styles = css`
+  static styles = globalCss`
     .list-mode {
       display: grid;
-      grid-template-columns: repeat(2, 433px);
-      grid-template-rows: repeat(2, auto);
-      column-gap: 110px;
+      grid-template-columns: 1fr;
       row-gap: 37px;
+      column-gap: 0;
       justify-content: center;
+    }
+    @media (min-width: 1000px) {
+      .list-mode {
+        grid-template-columns: repeat(2, 433px);
+        column-gap: 110px;
+      }
+    }
+    @media (min-width: 1600px) {
+      .list-mode {
+        grid-template-columns: repeat(3, 433px);
+        column-gap: 110px;
+      }
     }
     .list-item {
       display: flex;
@@ -27,10 +39,10 @@ export class EmployeeList extends LitElement {
       border-radius: 6px;
       background: #fff;
       padding: 24px 17px;
-      width: 433px;
+      width: 100%;
+      max-width: 433px;
       row-gap: 30px;
-      box-sizing: border-box;
-      margin: 0;
+      margin: 0 auto;
     }
     .list-item > div {
       flex-basis: 50%;
@@ -86,10 +98,10 @@ export class EmployeeList extends LitElement {
   render() {
     if (!this.employees.length) return html`<p>${t('noResults')}</p>`;
     return html`
-      <ul class="list-mode">
+      <div class="list-mode">
         ${this.employees.map(
           (e) => html`
-            <li class="list-item">
+            <div class="list-item">
               <div><b>${t('firstName')}:</b> ${e.firstName}</div>
               <div><b>${t('lastName')}:</b> ${e.lastName}</div>
               <div>
@@ -119,10 +131,10 @@ export class EmployeeList extends LitElement {
                   ${t('delete')}
                 </button>
               </div>
-            </li>
+            </div>
           `
         )}
-      </ul>
+      </div>
     `;
   }
 }

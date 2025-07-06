@@ -1,4 +1,5 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html} from 'lit';
+import { globalCss } from '../utils/global-css.js';
 import {t} from '../services/localization-service.js';
 import {formatDate} from '../services/time-service.js';
 
@@ -12,10 +13,22 @@ export class EmployeeTable extends LitElement {
     onToggleAll: {type: Function, attribute: false},
   };
 
-  static styles = css`
+  static styles = globalCss`
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      /* Hide scrollbar by default */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .table-scroll::-webkit-scrollbar {
+      display: none;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 700px;
     }
     tr:not(:last-child) {
       border-bottom: 1px solid var(--table-border-color);
@@ -54,6 +67,15 @@ export class EmployeeTable extends LitElement {
       border-radius: 3px;
       cursor: pointer;
     }
+    @media (min-width: 700px) {
+      .table-scroll {
+        overflow-x: visible !important;
+        max-width: none !important;
+      }
+      table {
+        min-width: 0;
+      }
+    }
   `;
 
   constructor() {
@@ -66,7 +88,7 @@ export class EmployeeTable extends LitElement {
     this.onToggleAll = () => {};
   }
 
-  render() {
+  renderTable() {
     if (!this.employees.length) return html`<p>${t('noResults')}</p>`;
     const currentIds = this.employees.map((e) => e.id);
     const allChecked =
@@ -120,10 +142,7 @@ export class EmployeeTable extends LitElement {
                   <button class="edit" @click=${() => this.onEdit(e.id)}>
                     <svg-icon size="18px" name="pen-to-square"></svg-icon>
                   </button>
-                  <button
-                    class="delete"
-                    @click=${() => this.onDelete(e.id)}
-                  >
+                  <button class="delete" @click=${() => this.onDelete(e.id)}>
                     <svg-icon size="18px" name="trash"></svg-icon>
                   </button>
                 </td>
@@ -133,6 +152,10 @@ export class EmployeeTable extends LitElement {
         </tbody>
       </table>
     `;
+  }
+
+  render() {
+    return html` <div class="table-scroll">${this.renderTable()}</div> `;
   }
 }
 

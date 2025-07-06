@@ -1,4 +1,5 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html} from 'lit';
+import { globalCss } from '../utils/global-css.js';
 import {t} from '../services/localization-service.js';
 
 export class DeleteDialog extends LitElement {
@@ -11,7 +12,7 @@ export class DeleteDialog extends LitElement {
     onClose: {type: Function},
   };
 
-  static styles = css`
+  static styles = globalCss`
     :host {
       display: block;
     }

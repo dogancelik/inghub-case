@@ -1,11 +1,12 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html} from 'lit';
+import { globalCss } from '../utils/global-css.js';
 import {localizationService, t} from '../services/localization-service.js';
 
 export class RouteHeader extends LitElement {
   static properties = {
     title: {type: String},
   };
-  static styles = css`
+  static styles = globalCss`
     :host {
       display: block;
     }

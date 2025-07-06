@@ -1,8 +1,9 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
+import { globalCss } from '../utils/global-css.js';
 import {localizationService, t} from '../services/localization-service.js';
 
 export class NavMenu extends LitElement {
-  static styles = css`
+  static styles = globalCss`
     nav {
       background: #fff;
       height: 47px;
@@ -48,7 +49,6 @@ export class NavMenu extends LitElement {
     }
     @media (max-width: 600px) {
       nav {
-        flex-direction: column;
         gap: 1rem;
       }
     }

@@ -1,4 +1,5 @@
-import {html, css, LitElement} from 'lit';
+import {html, LitElement} from 'lit';
+import { globalCss } from '../utils/global-css';
 import {styleMap} from 'lit/directives/style-map.js';
 import {unsafeSVG} from 'lit/directives/unsafe-svg.js';
 
@@ -42,7 +43,7 @@ export class SvgIcon extends LitElement {
     color: {type: String},
   };
 
-  static styles = css`
+  static styles = globalCss`
     :host {
       display: inline-block;
       --icon-size: 24px;
