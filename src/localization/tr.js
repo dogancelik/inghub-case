@@ -1,4 +1,6 @@
 export default {
+  selectAll: 'Tümünü Seç',
+  unselectAll: 'Tüm Seçimleri Kaldır',
   employeeList: 'Çalışan Listesi',
   employees: 'Çalışanlar',
   addNew: 'Yeni Ekle',

@@ -6,7 +6,7 @@ import { formatDate, formatPhone } from '../utils/data-format.js';
 export class EmployeeTable extends LitElement {
   static properties = {
     employees: {type: Array, attribute: false},
-    checkedEmployees: {type: Object, attribute: false},
+    checkedEmployees: {type: Array, attribute: false},
     onEdit: {type: Function, attribute: false},
     onDelete: {type: Function, attribute: false},
     onCheckEmployee: {type: Function, attribute: false},
@@ -54,13 +54,9 @@ export class EmployeeTable extends LitElement {
       width: 20px;
       height: 20px;
       border-radius: 6px;
-      vertical-align: middle;
       border: 2px solid var(--label-color);
-      appearance: none;
-      -webkit-appearance: none;
       outline: none;
       cursor: pointer;
-      /* checked state handled by browser */
     }
     .actions button {
       color: var(--primary-color);
@@ -70,7 +66,7 @@ export class EmployeeTable extends LitElement {
       border-radius: 3px;
       cursor: pointer;
     }
-    @media (min-width: 700px) {
+    @media (min-width: 1088px) {
       .table-scroll {
         overflow-x: visible !important;
         max-width: none !important;
@@ -84,7 +80,7 @@ export class EmployeeTable extends LitElement {
   constructor() {
     super();
     this.employees = [];
-    this.checkedEmployees = new window.Set();
+    this.checkedEmployees = [];
     this.onEdit = () => {};
     this.onDelete = () => {};
     this.onCheckEmployee = () => {};
@@ -92,12 +88,12 @@ export class EmployeeTable extends LitElement {
   }
 
   renderTable() {
-    if (!this.employees.length) return html`<p>${t('noResults')}</p>`;
+    if (!this.employees || !this.employees.length) return html`<p>${t('noResults')}</p>`;
     const currentIds = this.employees.map((e) => e.id);
     const allChecked =
       currentIds.length > 0 &&
-      currentIds.every((id) => this.checkedEmployees.has(id));
-    const someChecked = currentIds.some((id) => this.checkedEmployees.has(id));
+      currentIds.every((id) => this.checkedEmployees.includes(id));
+    const someChecked = currentIds.some((id) => this.checkedEmployees.includes(id));
     return html`
       <table>
         <thead>
@@ -129,7 +125,7 @@ export class EmployeeTable extends LitElement {
                 <td>
                   <input
                     type="checkbox"
-                    .checked=${this.checkedEmployees.has(e.id)}
+                    .checked=${this.checkedEmployees.includes(e.id)}
                     @change=${(ev) => this.onCheckEmployee(ev, e.id)}
                   />
                 </td>

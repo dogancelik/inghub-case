@@ -15,7 +15,7 @@ export class EmployeeListContainer extends LitElement {
     page: {type: Number},
     pageSize: {type: Number},
     total: {type: Number},
-    checkedEmployees: {type: Object},
+    checkedEmployees: {type: Array},
   };
 
   static styles = globalCss`
@@ -90,7 +90,7 @@ export class EmployeeListContainer extends LitElement {
     this.page = 1;
     this.pageSize = 10;
     this.total = 0;
-    this.checkedEmployees = new window.Set();
+    this.checkedEmployees = [];
     this.unsubscribe = null;
     this._onLocaleChanged = () => this.requestUpdate();
   }
@@ -129,10 +129,8 @@ export class EmployeeListContainer extends LitElement {
     const start = (this.page - 1) * pageSize;
     this.employees = all.slice(start, start + pageSize);
     // Remove checked employees that are not in the current page
-    const currentIds = new window.Set(this.employees.map((e) => e.id));
-    this.checkedEmployees = new window.Set(
-      [...this.checkedEmployees].filter((id) => currentIds.has(id))
-    );
+    const currentIds = this.employees.map((e) => e.id);
+    this.checkedEmployees = this.checkedEmployees.filter((id, idx, arr) => currentIds.includes(id) && arr.indexOf(id) === idx);
   }
 
   _onSearch(e) {
@@ -184,13 +182,13 @@ export class EmployeeListContainer extends LitElement {
 
   _onCheckEmployee(e, id) {
     const checked = e.target.checked;
-    const newSet = new window.Set(this.checkedEmployees);
+    let newArr = [...this.checkedEmployees];
     if (checked) {
-      newSet.add(id);
+      if (!newArr.includes(id)) newArr.push(id);
     } else {
-      newSet.delete(id);
+      newArr = newArr.filter((x) => x !== id);
     }
-    this.checkedEmployees = newSet;
+    this.checkedEmployees = newArr.filter((id, idx, arr) => arr.indexOf(id) === idx);
   }
 
   _onToggleAll(e) {
@@ -198,15 +196,10 @@ export class EmployeeListContainer extends LitElement {
     const currentIds = this.employees.map((e) => e.id);
     if (checked) {
       // Add all current page ids
-      this.checkedEmployees = new window.Set([
-        ...this.checkedEmployees,
-        ...currentIds,
-      ]);
+      this.checkedEmployees = Array.from(new Set([...this.checkedEmployees, ...currentIds]));
     } else {
       // Remove all current page ids
-      this.checkedEmployees = new window.Set(
-        [...this.checkedEmployees].filter((id) => !currentIds.includes(id))
-      );
+      this.checkedEmployees = this.checkedEmployees.filter((id) => !currentIds.includes(id));
     }
   }
 

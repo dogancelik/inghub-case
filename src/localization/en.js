@@ -1,4 +1,6 @@
 export default {
+  selectAll: 'Select All',
+  unselectAll: 'Unselect All',
   employeeList: 'Employee List',
   employees: 'Employees',
   addNew: 'Add New',
