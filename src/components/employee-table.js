@@ -1,7 +1,7 @@
 import {LitElement, html} from 'lit';
 import { globalCss } from '../utils/global-css.js';
 import {t} from '../services/localization-service.js';
-import {formatDate} from '../services/time-service.js';
+import { formatDate, formatPhone } from '../utils/data-format.js';
 
 export class EmployeeTable extends LitElement {
   static properties = {
@@ -37,6 +37,9 @@ export class EmployeeTable extends LitElement {
     td {
       text-align: center;
       background-color: #fff;
+      &:not(:first-child) {
+        min-width: 100px;
+      }
     }
     th {
       height: 76px;
@@ -134,7 +137,7 @@ export class EmployeeTable extends LitElement {
                 <td>${e.lastName}</td>
                 <td>${formatDate(e.dateOfEmployment)}</td>
                 <td>${formatDate(e.dateOfBirth)}</td>
-                <td>${e.phone}</td>
+                <td>${formatPhone(e.phone)}</td>
                 <td>${e.email}</td>
                 <td>${t(e.department.toLowerCase())}</td>
                 <td>${t(e.position.toLowerCase())}</td>

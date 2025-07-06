@@ -2,7 +2,6 @@ import {LitElement, html} from 'lit';
 import { globalCss } from '../utils/global-css.js';
 import {localizationService, t} from '../services/localization-service.js';
 import {employeeStore} from '../state/employee-store.js';
-// import {formatDate} from '../services/time-service.js';
 
 import './delete-dialog.js';
 import './employee-list.js';

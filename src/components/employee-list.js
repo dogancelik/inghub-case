@@ -1,7 +1,7 @@
 import {LitElement, html} from 'lit';
 import { globalCss } from '../utils/global-css.js';
 import {t} from '../services/localization-service.js';
-import {formatDate} from '../services/time-service.js';
+import { formatDate, formatPhone } from '../utils/data-format.js';
 
 export class EmployeeList extends LitElement {
   static properties = {
@@ -112,7 +112,7 @@ export class EmployeeList extends LitElement {
               <div>
                 <b>${t('dateOfBirth')}:</b> ${formatDate(e.dateOfBirth)}
               </div>
-              <div><b>${t('phone')}:</b> ${e.phone}</div>
+              <div><b>${t('phone')}:</b> ${formatPhone(e.phone)}</div>
               <div><b>${t('email')}:</b> ${e.email}</div>
               <div>
                 <b>${t('department')}:</b> ${t(e.department.toLowerCase())}
