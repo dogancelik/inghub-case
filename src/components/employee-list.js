@@ -2,6 +2,7 @@ import {LitElement, html} from 'lit';
 import { globalCss } from '../utils/global-css.js';
 import {t} from '../services/localization-service.js';
 import { formatDate, formatPhone } from '../utils/data-format.js';
+import { BREAKPOINTS } from '../utils/breakpoints.js';
 
 export class EmployeeList extends LitElement {
   static properties = {
@@ -20,13 +21,13 @@ export class EmployeeList extends LitElement {
       column-gap: 0;
       justify-content: center;
     }
-    @media (min-width: 1000px) {
+    @media (min-width: ${BREAKPOINTS.md}px) {
       .list-mode {
         grid-template-columns: repeat(2, 433px);
         column-gap: 110px;
       }
     }
-    @media (min-width: 1600px) {
+    @media (min-width: ${BREAKPOINTS.lg}px) {
       .list-mode {
         grid-template-columns: repeat(3, 433px);
         column-gap: 110px;

@@ -1,6 +1,7 @@
 import { LitElement, html } from 'lit';
 import { globalCss } from '../utils/global-css.js';
 import {localizationService, t} from '../services/localization-service.js';
+import { BREAKPOINTS } from '../utils/breakpoints.js';
 
 export class NavMenu extends LitElement {
   static styles = globalCss`
@@ -47,7 +48,7 @@ export class NavMenu extends LitElement {
       vertical-align: middle;
       line-height: 1;
     }
-    @media (max-width: 600px) {
+    @media (max-width: ${BREAKPOINTS.sm}px) {
       nav {
         gap: 1rem;
       }

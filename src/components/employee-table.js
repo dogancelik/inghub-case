@@ -2,6 +2,7 @@ import {LitElement, html} from 'lit';
 import { globalCss } from '../utils/global-css.js';
 import {t} from '../services/localization-service.js';
 import { formatDate, formatPhone } from '../utils/data-format.js';
+import { BREAKPOINTS } from '../utils/breakpoints.js';
 
 export class EmployeeTable extends LitElement {
   static properties = {
@@ -66,7 +67,7 @@ export class EmployeeTable extends LitElement {
       border-radius: 3px;
       cursor: pointer;
     }
-    @media (min-width: 1088px) {
+    @media (min-width: ${BREAKPOINTS.table}px) {
       .table-scroll {
         overflow-x: visible !important;
         max-width: none !important;

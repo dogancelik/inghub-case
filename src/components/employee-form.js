@@ -2,6 +2,7 @@ import {LitElement, html} from 'lit';
 import {globalCss} from '../utils/global-css.js';
 import {localizationService, t} from '../services/localization-service.js';
 import {employeeStore} from '../state/employee-store.js';
+import { BREAKPOINTS } from '../utils/breakpoints.js';
 
 function emptyEmployee() {
   return {
@@ -42,7 +43,7 @@ export class EmployeeForm extends LitElement {
     .you-are-editing {
       min-height: 65px;
     }
-    @media (max-width: 900px) {
+    @media (max-width: ${BREAKPOINTS.md}px) {
       .you-are-editing {
         min-height: 0;
       }
@@ -59,7 +60,7 @@ export class EmployeeForm extends LitElement {
       width: 85%;
       margin: 0 auto 82px auto;
     }
-    @media (max-width: 900px) {
+    @media (max-width: ${BREAKPOINTS.md}px) {
       .fields {
         grid-template-columns: 1fr;
         column-gap: 0;
@@ -68,7 +69,7 @@ export class EmployeeForm extends LitElement {
         margin-bottom: 20px;
       }
     }
-      @media (max-width: 1600px) {
+      @media (max-width: ${BREAKPOINTS.lg}px) {
       .field {
         max-width: var(--form-field-width);
       }
@@ -98,7 +99,7 @@ export class EmployeeForm extends LitElement {
       border-radius: 4px;
       background-color: #fff;
     }
-    @media (max-width: 900px) {
+    @media (max-width: ${BREAKPOINTS.md}px) {
       input,
       select {
         width: 100%;

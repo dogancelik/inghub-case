@@ -8,6 +8,7 @@ import '../components/route-header.js';
 import '../components/svg-icon.js';
 // eslint-disable-next-line no-unused-vars
 import {localizationService} from '../services/localization-service.js';
+import { BREAKPOINTS } from '../utils/breakpoints.js';
 
 export class AppRoot extends LitElement {
   static styles = globalCss`
@@ -23,7 +24,7 @@ export class AppRoot extends LitElement {
       margin: 0 auto;
       padding: 35px 45px;
     }
-    @media (max-width: 600px) {
+    @media (max-width: ${BREAKPOINTS.sm}px) {
       main {
         padding: 20px 10px;
       }
