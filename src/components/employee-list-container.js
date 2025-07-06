@@ -100,12 +100,51 @@ export class EmployeeListContainer extends LitElement {
     this.unsubscribe = employeeStore.subscribe(() => this._updateList());
     this._updateList();
     localizationService.onLocaleChanged(this._onLocaleChanged);
+    this._resizeHandler = (() => {
+      let timeout;
+      return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          this._onResize();
+        }, 400);
+      };
+    })();
+    window.addEventListener('resize', this._resizeHandler);
   }
+
   disconnectedCallback() {
     if (this.unsubscribe) this.unsubscribe();
     localizationService.offLocaleChanged(this._onLocaleChanged);
+    window.removeEventListener('resize', this._resizeHandler);
     super.disconnectedCallback();
   }
+
+  _onResize() {
+    // Only rerender if page size would change
+    const newPageSize = this._getPageSize();
+    if (newPageSize !== this._lastPageSize) {
+      this._lastPageSize = newPageSize;
+      this._updateList();
+      this.requestUpdate();
+    }
+  }
+
+  _getPageSize() {
+    if (this.view === 'list') {
+      const width = window.innerWidth;
+      if (width > 1600) {
+        return 6;
+      } else if (width > 1000) {
+        return 4;
+      } else {
+        return 4;
+      }
+    } else {
+      return 10;
+    }
+  }
+
+  _lastPageSize = undefined;
 
   _updateList() {
     let all = employeeStore.getAll();
@@ -120,12 +159,7 @@ export class EmployeeListContainer extends LitElement {
       );
     }
     this.total = all.length;
-    let pageSize = this.pageSize;
-    if (this.view === 'list') {
-      pageSize = 4;
-    } else {
-      pageSize = 10;
-    }
+    const pageSize = this._getPageSize();
     const start = (this.page - 1) * pageSize;
     this.employees = all.slice(start, start + pageSize);
     // Remove checked employees that are not in the current page
@@ -267,7 +301,7 @@ export class EmployeeListContainer extends LitElement {
 
   _renderPagination() {
     // Use correct page size for current view
-    const pageSize = this.view === 'list' ? 4 : 10;
+    const pageSize = this._getPageSize();
     if (this.total <= pageSize) return '';
     const totalPages = Math.ceil(this.total / pageSize);
     const page = this.page;
