@@ -1,8 +1,8 @@
 import {LitElement, html} from 'lit';
-import {globalCss} from '../utils/global-css.js';
+import {globalCss as css} from '../utils/global-css.js';
 import {localizationService, t} from '../services/localization-service.js';
 import {employeeStore} from '../state/employee-store.js';
-import { BREAKPOINTS } from '../utils/breakpoints.js';
+import {BREAKPOINTS} from '../utils/breakpoints.js';
 
 function emptyEmployee() {
   return {
@@ -25,7 +25,7 @@ export class EmployeeForm extends LitElement {
     errors: {type: Object},
   };
 
-  static styles = globalCss`
+  static styles = css`
     h2 {
       color: var(--primary-color);
       margin-left: 52px;
@@ -53,23 +53,13 @@ export class EmployeeForm extends LitElement {
     }
     .fields {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      column-gap: 149px;
-      row-gap: 59px;
-      flex-basis: 85%;
-      width: 85%;
-      margin: 0 auto 82px auto;
+      grid-template-columns: 1fr;
+      column-gap: 0;
+      row-gap: 10px;
+      width: 100%;
+      margin-bottom: 20px;
     }
-    @media (max-width: ${BREAKPOINTS.md}px) {
-      .fields {
-        grid-template-columns: 1fr;
-        column-gap: 0;
-        row-gap: 10px;
-        width: 100%;
-        margin-bottom: 20px;
-      }
-    }
-      @media (max-width: ${BREAKPOINTS.lg}px) {
+    @media (min-width: ${BREAKPOINTS.md}px) {
       .field {
         max-width: var(--form-field-width);
       }
@@ -79,11 +69,20 @@ export class EmployeeForm extends LitElement {
         grid-template-columns: repeat(2, var(--form-field-width));
       }
     }
+    @media (min-width: ${BREAKPOINTS.lg}px) {
+      .fields {
+        grid-template-columns: repeat(3, 1fr);
+        column-gap: 149px;
+        row-gap: 59px;
+        flex-basis: 85%;
+        width: 85%;
+        margin: 0 auto 82px auto;
+      }
+    }
     .field {
       display: flex;
       flex-direction: column;
       margin-bottom: 0;
-      /* Remove flex-basis and width for grid layout */
     }
     label {
       display: block;
