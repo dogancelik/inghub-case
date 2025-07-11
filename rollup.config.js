@@ -22,7 +22,9 @@ export default {
     }
   },
   plugins: [
-    html(),
+    html({
+      publicPath: '/',
+    }),
     replace({preventAssignment: false, 'Reflect.decorate': 'undefined'}),
     resolve(),
     copy({
